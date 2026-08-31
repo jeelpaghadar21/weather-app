@@ -16,18 +16,16 @@ function Weather() {
     }
 
     try {
-      setError("");
       setLoading(true);
+      setError("");
       setWeather(null);
 
       const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(
-        city
+        city,
       )}&appid=${API_KEY}&units=metric`;
 
       const response = await fetch(url);
       const data = await response.json();
-
-      console.log("OpenWeather Response:", data);
 
       if (!response.ok) {
         setError(data.message || "Unable to fetch weather data");
@@ -36,16 +34,14 @@ function Weather() {
 
       setWeather({
         cityName: `${data.name}, ${data.sys.country}`,
-        data: {
-          temperature: data.main.temp,
-          humidity: data.main.humidity,
-          wind: data.wind.speed,
-          condition: data.weather[0].main,
-          description: data.weather[0].description,
-        },
+        temperature: data.main.temp,
+        humidity: data.main.humidity,
+        wind: data.wind.speed,
+        condition: data.weather[0].main,
+        description: data.weather[0].description,
       });
     } catch (err) {
-      console.error("API Error:", err);
+      console.error(err);
       setError("Network error. Please check your internet connection.");
     } finally {
       setLoading(false);
@@ -56,47 +52,56 @@ function Weather() {
     <div className="weather">
       <h1>Weather App</h1>
 
-      <input
-        type="text"
-        placeholder="Enter city (e.g. Rajkot, Mumbai)"
-        value={city}
-        onChange={(e) => setCity(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            getWeather();
-          }
-        }}
-      />
+      <div className="search-box">
+        <input
+          type="text"
+          placeholder="Enter city (e.g. Rajkot, Mumbai)"
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              getWeather();
+            }
+          }}
+        />
 
-      <button onClick={getWeather} disabled={loading}>
-        {loading ? "Searching..." : "Search"}
-      </button>
+        <button onClick={getWeather} disabled={loading}>
+          {loading ? "Searching..." : "Search"}
+        </button>
+      </div>
 
-      {error && <p>{error}</p>}
+      {error && <p className="error">{error}</p>}
 
       {weather && (
-        <div>
+        <div className="weather-result">
           <h2>{weather.cityName}</h2>
 
-          <p>
-            🌡 Temperature: {Math.round(weather.data.temperature)}°C
-          </p>
+          <div className="weather-info">
+            <div className="weather-card">
+              <span>🌡️ Temperature</span>
+              <strong>{Math.round(weather.temperature)}°C</strong>
+            </div>
 
-          <p>
-            💧 Humidity: {weather.data.humidity}%
-          </p>
+            <div className="weather-card">
+              <span>💧 Humidity</span>
+              <strong>{weather.humidity}%</strong>
+            </div>
 
-          <p>
-            💨 Wind: {weather.data.wind} m/s
-          </p>
+            <div className="weather-card">
+              <span>💨 Wind</span>
+              <strong>{weather.wind} m/s</strong>
+            </div>
 
-          <p>
-            ☁️ Weather: {weather.data.condition}
-          </p>
+            <div className="weather-card">
+              <span>☁️ Weather</span>
+              <strong>{weather.condition}</strong>
+            </div>
 
-          <p>
-            🌤 Description: {weather.data.description}
-          </p>
+            <div className="weather-card full-width">
+              <span>🌤️ Description</span>
+              <strong>{weather.description}</strong>
+            </div>
+          </div>
         </div>
       )}
     </div>

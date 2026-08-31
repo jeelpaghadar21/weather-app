@@ -2,9 +2,9 @@ import Weather from "./components/Weather";
 
 function App() {
   return (
-    <div>
+    <main>
       <Weather />
-    </div>
+    </main>
   );
 }
 
